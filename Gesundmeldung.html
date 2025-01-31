@@ -1,0 +1,164 @@
+<!-- Aktualisierte Gesundmeldung.html -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesundmeldung</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #00B7FF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .modal {
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .modal-header {
+            background: #00B7FF;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+            margin: -20px -20px 20px -20px;
+        }
+        .modal-body {
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+        .modal-body label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .modal-body select, .modal-body input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        .modal-footer {
+            text-align: right;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .cancel {
+            background: #ccc;
+            color: #333;
+            margin-right: 10px;
+        }
+        .cancel:hover {
+            background: #bbb;
+        }
+        .submit {
+            background: #00B7FF;
+            color: white;
+        }
+        .submit:hover {
+            background: #009fd4;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">Gesundmeldung</div>
+        <div class="modal-body">
+            <label for="krankmeldungen-select">Wähle eine Krankmeldung:</label>
+            <select id="krankmeldungen-select">
+                <option value="">Bitte auswählen</option>
+            </select>
+            
+            <label for="gesund-ab">Gesund ab (Datum):</label>
+            <input type="date" id="gesund-ab">
+        </div>
+        <div class="modal-footer">
+            <button class="cancel" onclick="navigateToDashboard()">Zurück</button>
+            <button class="submit" onclick="markAsHealthy()">Bestätigen</button>
+        </div>
+    </div>
+
+    <script>
+        function navigateToDashboard() {
+            window.location.href = 'Dashboard.html';
+        }
+
+        function loadKrankmeldungen() {
+            const role = localStorage.getItem('role');
+            if (!role) {
+                alert('Benutzerrolle nicht gefunden! Bitte erneut einloggen.');
+                window.location.href = 'LogIn.html';
+                return;
+            }
+
+            const krankmeldungen = JSON.parse(localStorage.getItem('krankmeldungen') || '[]');
+            const selectElem = document.getElementById('krankmeldungen-select');
+
+            krankmeldungen.forEach((entry, index) => {
+                if (entry.user === role && entry.status === 'offen') {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = `${entry.startDate} bis ${entry.endDate}`;
+                    selectElem.appendChild(option);
+                }
+            });
+        }
+
+        function markAsHealthy() {
+            const selectElem = document.getElementById('krankmeldungen-select');
+            const gesundAb = document.getElementById('gesund-ab').value;
+            const selectedIndex = selectElem.value;
+            const currentDate = new Date();
+            const gesundMeldungDatum = currentDate.toISOString().split('T')[0];
+            const gesundMeldungUhrzeit = currentDate.toTimeString().split(' ')[0];
+
+            if (!selectedIndex || !gesundAb) {
+                alert('Bitte wählen Sie eine Krankmeldung aus und geben Sie ein Datum ein.');
+                return;
+            }
+
+            const krankmeldungen = JSON.parse(localStorage.getItem('krankmeldungen') || '[]');
+            krankmeldungen[selectedIndex].gesundDatum = gesundAb;
+            krankmeldungen[selectedIndex].gesundMeldungDatum = gesundMeldungDatum;
+            krankmeldungen[selectedIndex].gesundMeldungUhrzeit = gesundMeldungUhrzeit;
+            krankmeldungen[selectedIndex].status = `Gesund gemeldet ab ${gesundAb}`;
+            localStorage.setItem('krankmeldungen', JSON.stringify(krankmeldungen));
+
+            alert('Gesundmeldung erfolgreich gespeichert.');
+            window.location.href = 'Dashboard.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadKrankmeldungen);
+    </script>
+</body>
+</html>

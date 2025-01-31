@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitarbeiterübersicht Krankmeldungen</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #00B7FF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .modal {
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: #00B7FF;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2em; /* Schriftgröße angepasst */
+            font-weight: normal; /* Schriftstärke angepasst */
+            font-family: Arial, sans-serif; /* Einheitliche Schriftart */
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .modal-body ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .modal-body li {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+        }
+
+        .modal-footer {
+            padding: 10px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-footer button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .modal-footer .cancel {
+            background: #ccc;
+            color: #333;
+        }
+
+        .modal-footer .cancel:hover {
+            background: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">Mitarbeiterübersicht Krankmeldungen</div>
+        <div class="modal-body">
+            <ul id="krankmeldungen-list">
+                <!-- Krankmeldungen werden hier dynamisch geladen -->
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <button class="cancel" onclick="navigateToDashboard()">Zurück</button>
+        </div>
+    </div>
+
+    <script>
+        function navigateToDashboard() {
+            window.location.href = 'Dashboard.html';
+        }
+
+        function loadKrankmeldungen() {
+            const role = localStorage.getItem('role');
+            const username = localStorage.getItem('username'); // Benutzername für spezifische Filter
+            const krankmeldungen = JSON.parse(localStorage.getItem('krankmeldungen') || '[]');
+            const listElem = document.getElementById('krankmeldungen-list');
+
+            let visibleKrankmeldungen = [];
+
+            // Logik für Zugriff basierend auf der Rolle
+            if (role === 'Geschäftsführer') {
+                visibleKrankmeldungen = krankmeldungen; // Geschäftsführer kann alle sehen
+            } else if (role === 'Personalabteilung') {
+                visibleKrankmeldungen = krankmeldungen.filter(entry => entry.user !== 'Geschäftsführer');
+            } else if (role === 'Teamleiter (Journalismus)') {
+                visibleKrankmeldungen = krankmeldungen.filter(entry =>
+                    entry.user === username ||
+                    entry.user === 'angestellter_journalismus1' ||
+                    entry.user === 'angestellter_journalismus2'
+                );
+            } else if (role === 'Teamleiter (Marketing)') {
+                visibleKrankmeldungen = krankmeldungen.filter(entry =>
+                    entry.user === username ||
+                    entry.user === 'angestellter_marketing1' ||
+                    entry.user === 'angestellter_marketing2'
+                );
+            } else {
+                alert("Sie haben keine Berechtigung, diese Seite zu sehen.");
+                window.location.href = 'Dashboard.html';
+                return;
+            }
+
+            // Keine Krankmeldungen sichtbar
+            if (visibleKrankmeldungen.length === 0) {
+                listElem.innerHTML = '<li>Keine Krankmeldungen vorhanden.</li>';
+                return;
+            }
+
+            // Krankmeldungen anzeigen
+            visibleKrankmeldungen.forEach(entry => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <strong>Mitarbeiter:</strong> ${entry.user}<br>
+                    <strong>Zeitraum:</strong> ${entry.startDate} bis ${entry.endDate}<br>
+                    <strong>Status:</strong> ${entry.status}<br>
+                    ${entry.kommentar ? `<strong>Kommentar:</strong> ${entry.kommentar}` : ''}
+                `;
+                listElem.appendChild(listItem);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadKrankmeldungen);
+    </script>
+</body>
+</html>

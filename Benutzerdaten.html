@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benutzerdaten</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #00B7FF;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: #00B7FF;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-body p {
+            margin: 10px 0;
+            font-size: 1em;
+        }
+
+        .modal-footer {
+            padding: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .modal-footer button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            background: #00B7FF;
+            color: white;
+        }
+
+        .modal-footer button:hover {
+            background: #009fd4;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">Benutzerdaten</div>
+        <div class="modal-body" id="user-data">
+            <!-- Benutzerinformationen werden hier dynamisch geladen -->
+        </div>
+        <div class="modal-footer">
+            <button onclick="navigateToDashboard()">Zurück</button>
+        </div>
+    </div>
+
+    <script>
+        function navigateToDashboard() {
+            window.location.href = 'Dashboard.html';
+        }
+
+        function loadUserData() {
+            const username = localStorage.getItem('username');
+
+            if (!username) {
+                document.getElementById('user-data').innerHTML = '<p>Fehler: Benutzername nicht gefunden. Bitte melden Sie sich erneut an.</p>';
+                return;
+            }
+
+            const users = [
+                { username: "geschaeftsfuehrer", id: '003', name: 'Almert', vorname: 'Dieter', abteilung: 'Geschäftsführung', vorgesetzter: '---', job: 'Geschäftsführer', email: 'max.koch@beispiel.de' },
+                { username: "personalabteilung", id: '004', name: 'Hoffmann', vorname: 'Laura', abteilung: 'Personalabteilung', vorgesetzter: 'Almert', job: 'Personalreferentin', email: 'laura.hoffmann@beispiel.de' },
+                { username: "teamleiter_marketing", id: '005', name: 'Meier', vorname: 'Julia', abteilung: 'Marketing', vorgesetzter: 'Almert', job: 'Teamleiterin', email: 'julia.meier@beispiel.de' },
+                { username: "teamleiter_journalismus", id: '006', name: 'Fischer', vorname: 'Peter', abteilung: 'Journalismus', vorgesetzter: 'Almert', job: 'Teamleiter', email: 'peter.fischer@beispiel.de' },
+                { username: "angestellter_marketing1", id: '007', name: 'Schmidt', vorname: 'Hans', abteilung: 'Marketing', vorgesetzter: 'Meier', job: 'Marketing-Spezialist', email: 'hans.schmidt@beispiel.de' },
+                { username: "angestellter_marketing2", id: '008', name: 'Klein', vorname: 'Lena', abteilung: 'Marketing', vorgesetzter: 'Meier', job: 'Marketing-Assistentin', email: 'lena.klein@beispiel.de' },
+                { username: "angestellter_journalismus1", id: '009', name: 'Bauer', vorname: 'Sofia', abteilung: 'Journalismus', vorgesetzter: 'Fischer', job: 'Redakteurin', email: 'sofia.bauer@beispiel.de' },
+                { username: "angestellter_journalismus2", id: '010', name: 'Weber', vorname: 'Lukas', abteilung: 'Journalismus', vorgesetzter: 'Fischer', job: 'Reporter', email: 'lukas.weber@beispiel.de' }
+            ];
+
+            const user = users.find(u => u.username === username);
+
+            if (user) {
+                document.getElementById('user-data').innerHTML = `
+                    <p><strong>MitarbeiterNr:</strong> ${user.id}</p>
+                    <p><strong>Name:</strong> ${user.name}</p>
+                    <p><strong>Vorname:</strong> ${user.vorname}</p>
+                    <p><strong>Abteilung:</strong> ${user.abteilung}</p>
+                    <p><strong>Vorgesetzter:</strong> ${user.vorgesetzter}</p>
+                    <p><strong>Jobbezeichnung:</strong> ${user.job}</p>
+                    <p><strong>E-Mail-Adresse:</strong> ${user.email}</p>
+                `;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadUserData);
+    </script>
+</body>
+</html>

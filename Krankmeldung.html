@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neue Krankmeldung</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #00B7FF;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: #00B7FF;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-body label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .modal-body input[type="date"],
+        .modal-body textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            padding: 10px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-footer button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .modal-footer .cancel {
+            background: #ccc;
+            color: #333;
+        }
+
+        .modal-footer .submit {
+            background: #00B7FF;
+            color: white;
+        }
+
+        .modal-footer .submit:hover {
+            background: #009fd4;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">
+            Neue Krankmeldung
+        </div>
+        <div class="modal-body">
+            <label for="start-date">Startdatum:</label>
+            <input type="date" id="start-date">
+
+            <label for="end-date">Enddatum:</label>
+            <input type="date" id="end-date">
+
+            <label for="kommentar">Kommentar (optional):</label>
+            <textarea id="kommentar" rows="4" placeholder="Zusätzliche Informationen"></textarea>
+        </div>
+        <div class="modal-footer">
+            <button class="cancel" onclick="navigateToDashboard()">Abbruch</button>
+            <button class="submit" onclick="createKrankmeldung()">Absenden</button>
+        </div>
+    </div>
+
+    <script>
+        function navigateToDashboard() {
+            window.location.href = 'Dashboard.html';
+        }
+
+        function createKrankmeldung() {
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            const kommentar = document.getElementById('kommentar').value;
+
+            if (!startDate || !endDate) {
+                alert('Bitte geben Sie Start- und Enddatum ein.');
+                return;
+            }
+
+            const username = localStorage.getItem('username');
+            const role = localStorage.getItem('role');
+
+            const newKrankmeldung = {
+                startDate,
+                endDate,
+                kommentar,
+                status: 'offen',
+                user: role,
+                username: username
+            };
+
+            const krankmeldungen = JSON.parse(localStorage.getItem('krankmeldungen') || '[]');
+            krankmeldungen.push(newKrankmeldung);
+            localStorage.setItem('krankmeldungen', JSON.stringify(krankmeldungen));
+
+            alert('Krankmeldung erfolgreich erstellt.\n\nHinweis: Falls Ihre Krankmeldung länger als sechs Wochen andauert, endet die Lohnfortzahlung durch den Arbeitgeber. Bitte setzen Sie sich frühzeitig mit Ihrer Krankenkasse in Verbindung, um das Krankengeld zu beantragen.');
+            navigateToDashboard();
+        }
+    </script>
+</body>
+</html>

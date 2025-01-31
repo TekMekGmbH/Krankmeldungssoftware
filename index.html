@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anmelde Page</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #00B7FF;
+            background: linear-gradient(180deg, #00B7FF 0%, #00B7FF 100%);
+            color: #333;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+
+        .login-container h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .login-container input {
+            display: block;
+            width: calc(100% - 20px);
+            margin: 0 auto 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #00B7FF;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-container button:hover {
+            background-color: #009fd4;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Niederweser Verlag</h1>
+        <input type="text" placeholder="Benutzername" id="username">
+        <input type="password" placeholder="Passwort" id="password">
+        <button onclick="handleLogin()">Anmelden</button>
+    </div>
+
+    <script>
+        const users = [
+            { username: "geschaeftsfuehrer", password: "1234", role: "Geschäftsführer" },
+            { username: "personalabteilung", password: "1234", role: "Personalabteilung" },
+            { username: "teamleiter_marketing", password: "1234", role: "Teamleiter (Marketing)" },
+            { username: "teamleiter_journalismus", password: "1234", role: "Teamleiter (Journalismus)" },
+            { username: "angestellter_marketing1", password: "1234", role: "Angestellter (Marketing)" },
+            { username: "angestellter_marketing2", password: "1234", role: "Angestellter (Marketing)" },
+            { username: "angestellter_journalismus1", password: "1234", role: "Angestellter (Journalismus)" },
+            { username: "angestellter_journalismus2", password: "1234", role: "Angestellter (Journalismus)" },
+        ];
+
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                localStorage.setItem('role', user.role); // Speichere die Rolle
+                localStorage.setItem('username', username); // Speichere den Benutzernamen
+                window.location.href = 'Dashboard.html';
+            } else {
+                alert("Ungültige Anmeldedaten. Bitte versuchen Sie es erneut.");
+            }
+        }
+    </script>
+</body>
+</html>

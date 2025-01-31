@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard mit Sidebar</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #00B7FF;
+            background: linear-gradient(180deg, #ffffff 60px, #00B7FF 60px);
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .notification {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 400px;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.notification.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.close-btn:hover {
+    color: red;
+}
+
+        header {
+            background: #ffffff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            color: rgb(0, 0, 0);
+        }
+
+        header h1 {
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        .menu-icon {
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: white;
+            box-shadow: -2px 0 6px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: right 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar a, .sidebar button {
+            text-decoration: none;
+            color: #333;
+            font-size: 1em;
+            margin-bottom: 15px;
+            display: block;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f4f4f4;
+            text-align: left;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .sidebar a:hover, .sidebar button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 60px);
+            margin-top: 60px;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+
+        .login-container h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #00B7FF;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+
+        .login-container button:last-child {
+            margin-bottom: 0;
+        }
+
+        .login-container button:hover {
+            background-color: #009fd4;
+        }
+
+        .role-display {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #ffffff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            font-size: 1em;
+            font-weight: bold;
+            color: #555;
+            z-index: 1000;
+        }
+
+        .clear-data-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .clear-data-btn:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <div id="notification" class="notification">
+        <span id="notification-text"></span>
+        <button class="close-btn" onclick="closeNotification()">✖</button>
+    </div>
+
+    <header>
+        <h1>Niederweser Verlag</h1>
+        <div class="menu-icon" onclick="toggleSidebar(event)">&#9776;</div>
+    </header>
+    <div class="sidebar" id="sidebar">
+        <a href="Benutzerdaten.html">Benutzerdaten</a>
+        <a href="Benachrichtigungen.html">Benachrichtigungen</a>
+        <a href="Krankmeldung.html">Neue Krankmeldung</a>
+        <a href="AktuelleKrankmeldung.html">Aktuelle Krankmeldungen verwalten</a>
+        <a href="Gesundmeldung.html">Gesundmelden</a>
+        <a href="Einstellungen.html">Einstellungen</a>
+        <button onclick="logout()">Abmelden</button>
+    </div>
+    <div class="content" onclick="closeSidebar(event)">
+        <div class="login-container">
+            <h2>Willkommen!</h2>
+            <button onclick="window.location.href='Krankmeldung.html'">Neue Krankmeldung</button>
+            <button onclick="window.location.href='AktuelleKrankmeldung.html'">Aktuelle Krankmeldungen verwalten</button>
+            <button onclick="window.location.href='Gesundmeldung.html'">Gesundmeldung</button>
+            <button id="mitarbeiteruebersicht-btn" onclick="window.location.href='MitarbeiterKrankmeldungen.html'" style="display: none;">Mitarbeiterübersicht Krankmeldungen</button>
+        </div>
+    </div>
+    <div class="role-display" id="user-role">Rolle: Unbekannt</div>
+    <button class="clear-data-btn" onclick="clearLocalStorage()">Daten löschen</button>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+
+        function toggleSidebar(event) {
+            event.stopPropagation();
+            sidebar.classList.toggle('open');
+        }
+
+        function closeSidebar(event) {
+            if (sidebar.classList.contains('open') && !sidebar.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        }
+
+        function getNextWorkday(endDate) {
+            const date = new Date(endDate);
+            let day = date.getDay();
+
+            // Move to the next day (Monday to Friday only)
+            if (day === 5) {
+                // Friday -> Monday
+                date.setDate(date.getDate() + 3);
+            } else if (day === 6) {
+                // Saturday -> Monday
+                date.setDate(date.getDate() + 2);
+            } else {
+                // Any other day -> next day
+                date.setDate(date.getDate() + 1);
+            }
+
+            return date.toLocaleDateString('de-DE', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+        }
+
+        function displayNotification() {
+    const notification = document.getElementById('notification');
+    const notificationText = document.getElementById('notification-text');
+
+    const krankmeldungen = JSON.parse(localStorage.getItem('krankmeldungen') || '[]');
+    const role = localStorage.getItem('role');
+
+    const activeKrankmeldung = krankmeldungen.find(km => km.user === role && (km.status === 'offen' || km.status.startsWith('gesund gemeldet')));
+
+    if (activeKrankmeldung) {
+        let nextWorkday = getNextWorkday(activeKrankmeldung.endDate);
+
+        if (activeKrankmeldung.status.startsWith('gesund gemeldet')) {
+            const gesundAbDatum = new Date(activeKrankmeldung.status.split('ab ')[1]);
+            nextWorkday = gesundAbDatum.toLocaleDateString('de-DE', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+        }
+
+        let message = `Hinweis: Sie müssen ab ${nextWorkday} wieder zur Arbeit erscheinen.`;
+
+        // Prüfen, ob die Krankmeldung länger als 6 Wochen dauert (42 Tage)
+        const startDate = new Date(activeKrankmeldung.startDate);
+        const endDate = new Date(activeKrankmeldung.endDate);
+        const timeDiff = endDate - startDate;
+        const daysDiff = timeDiff / (1000 * 60 * 60 * 24); // Tage berechnen
+
+        if (daysDiff > 42) {
+            message += "\nAchtung: Ihre Krankmeldung überschreitet 6 Wochen! Die Lohnfortzahlung durch den Arbeitgeber endet. Bitte setzen Sie sich frühzeitig mit Ihrer Krankenkasse in Verbindung, um Krankengeld zu beantragen.";
+        }
+
+        notificationText.textContent = message;
+        notification.classList.add('show');
+
+        // Automatisches Ausblenden nach 5 Sekunden
+        setTimeout(() => {
+            closeNotification();
+        }, 5000);
+    }
+}
+
+function closeNotification() {
+    document.getElementById('notification').classList.remove('show');
+}
+
+
+        // Benutzerrolle aus LocalStorage abrufen und anzeigen
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('role');
+            const roleElement = document.getElementById('user-role');
+            const mitarbeiterUebersichtBtn = document.getElementById('mitarbeiteruebersicht-btn');
+
+            // Benutzerrolle anzeigen
+            if (role) {
+                roleElement.textContent = `Rolle: ${role}`;
+
+                // Button nur für Rollen außer "Angestellter (Marketing)" und "Angestellter (Journalismus)" anzeigen
+                if (
+                    role !== 'Angestellter (Marketing)' &&
+                    role !== 'Angestellter (Journalismus)'
+                ) {
+                    mitarbeiterUebersichtBtn.style.display = 'block';
+                }
+            } else {
+                roleElement.textContent = "Rolle: Unbekannt";
+                alert("Keine Rolle gefunden! Bitte erneut einloggen.");
+                window.location.href = 'LogIn.html';
+            }
+
+            displayNotification();
+        });
+
+        // Funktion zum Löschen aller Daten aus dem localStorage
+        function clearLocalStorage() {
+            if (confirm('Möchten Sie wirklich alle Daten löschen?')) {
+                localStorage.clear();
+                alert('Alle Daten wurden erfolgreich gelöscht.');
+                window.location.reload();
+            }
+        }
+
+        // Abmelden-Funktion
+        function logout() {
+            localStorage.removeItem('role'); // Rolle aus dem LocalStorage entfernen
+            alert('Sie wurden abgemeldet.');
+            window.location.href = 'LogIn.html'; // Zurück zur Login-Seite
+        }
+    </script>
+</body>
+</html>

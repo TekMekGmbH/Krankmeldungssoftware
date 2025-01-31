@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einstellungen</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #00B7FF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .modal {
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .modal-header {
+            background: #00B7FF;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+            margin: -20px -20px 20px -20px;
+        }
+        .modal-body {
+            font-size: 1em;
+        }
+        .modal-body label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        .modal-body input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .modal-footer {
+            text-align: right;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            background: #00B7FF;
+            color: white;
+        }
+        button:hover {
+            background: #009fd4;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">Einstellungen</div>
+        <div class="modal-body">
+            <label for="language">Sprache:</label>
+            <select id="language">
+                <option value="de">Deutsch</option>
+                <option value="en">Englisch</option>
+                <option value="fr">Französisch</option>
+            </select>
+
+            <label for="notifications">Benachrichtigungen aktivieren:</label>
+            <input type="checkbox" id="notifications" checked>
+
+            <label for="theme">Design:</label>
+            <select id="theme">
+                <option value="light">Hell</option>
+                <option value="dark">Dunkel</option>
+            </select>
+        </div>
+        <div class="modal-footer">
+            <button onclick="saveSettings()">Speichern</button>
+            <button onclick="navigateToDashboard()">Zurück</button>
+        </div>
+    </div>
+
+    <script>
+        function navigateToDashboard() {
+            window.location.href = 'Dashboard.html';
+        }
+
+        function saveSettings() {
+            const language = document.getElementById('language').value;
+            const notifications = document.getElementById('notifications').checked;
+            const theme = document.getElementById('theme').value;
+
+            localStorage.setItem('language', language);
+            localStorage.setItem('notifications', notifications);
+            localStorage.setItem('theme', theme);
+
+            alert('Einstellungen wurden gespeichert!');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('language').value = localStorage.getItem('language') || 'de';
+            document.getElementById('notifications').checked = JSON.parse(localStorage.getItem('notifications')) || false;
+            document.getElementById('theme').value = localStorage.getItem('theme') || 'light';
+        });
+    </script>
+</body>
+</html>
